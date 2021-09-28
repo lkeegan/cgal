@@ -187,11 +187,11 @@ public:
     , sc_to_c_map(Pair_compare(comp))
   { }
   Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch);
-  Polyline_constraint_hierarchy_2(Polyline_constraint_hierarchy_2&&) = default;
+  Polyline_constraint_hierarchy_2(Polyline_constraint_hierarchy_2&&) noexcept;
   ~Polyline_constraint_hierarchy_2(){ clear();}
   void clear();
   Polyline_constraint_hierarchy_2& operator=(const Polyline_constraint_hierarchy_2& ch);
-  Polyline_constraint_hierarchy_2& operator=(Polyline_constraint_hierarchy_2&& ch) = default;
+  Polyline_constraint_hierarchy_2& operator=(Polyline_constraint_hierarchy_2&& ch) noexcept;
 
   // Query
   bool is_subconstrained_edge(T va, T vb) const;
@@ -293,10 +293,27 @@ Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch)
 }
 
 template <class T, class Compare, class Point>
+Polyline_constraint_hierarchy_2<T,Compare,Point>::
+    Polyline_constraint_hierarchy_2(Polyline_constraint_hierarchy_2&& ch) noexcept
+    : comp(ch.comp)
+      , sc_to_c_map(Pair_compare(comp))
+{
+  swap(ch);
+}
+
+template <class T, class Compare, class Point>
 Polyline_constraint_hierarchy_2<T,Compare,Point>&
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 operator=(const Polyline_constraint_hierarchy_2& ch){
   copy(ch);
+  return *this;
+}
+
+template <class T, class Compare, class Point>
+Polyline_constraint_hierarchy_2<T,Compare,Point>&
+Polyline_constraint_hierarchy_2<T,Compare,Point>::
+operator=(Polyline_constraint_hierarchy_2&& ch) noexcept{
+  swap(ch);
   return *this;
 }
 
