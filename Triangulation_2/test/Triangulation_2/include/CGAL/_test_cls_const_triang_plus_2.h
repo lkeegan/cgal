@@ -44,7 +44,6 @@ _test_cls_const_triang_plus_2( const TrP & )
   trp.insert(Point(4,4), Point(4,5));
   trp.push_back(Point(4,6));
   trp.push_back(Constraint(Point(4,3), Point(3,4)));
-
   // test access to the hierarchy
   std::cout << " test acces to the constraint hierarchy" << std::endl;
   Vertices_in_constraint_iterator vit = trp.vertices_in_constraint_begin(cid);
@@ -99,6 +98,16 @@ _test_cls_const_triang_plus_2( const TrP & )
   // trp2.print_hierarchy();
   // trp3.print_hierarchy();
 
+  //test move constructors
+  TrP trp4{trp};
+  trp4 = std::move(trp2);
+  assert(trp4.number_of_constraints() == trp.number_of_constraints());
+  assert(trp4.number_of_subconstraints() == trp.number_of_subconstraints());
+
+  TrP trp5{std::move(trp4)};
+  assert(trp5.number_of_constraints() == trp.number_of_constraints());
+  assert(trp5.number_of_subconstraints() == trp.number_of_subconstraints());
+
   //test remove_constraint
   std::cout << " test removal of constraint" << std::endl;
   trp.remove_constraint(cid);
@@ -146,7 +155,7 @@ _test_cls_const_triang_plus_2( const TrP & )
     out.close();
     trp.clear();
     std::ifstream in("cdtplus.txt");
-    in >> trp;
+    in >> trp; // this leaks
     assert(trp.number_of_constraints() == 3);
     std::size_t n = 0;
     for(Constraint_iterator cit = trp.constraints_begin(); cit != trp.constraints_end(); ++cit){
